@@ -1,4 +1,4 @@
-"C:\Program Files\JetBrains\CLion 2024.3.5\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2024.3.5/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\Users\kikki\Sem15_VL25\HauptSeminar\optimizedHuffmanCoding -B C:\Users\kikki\Sem15_VL25\HauptSeminar\optimizedHuffmanCoding\cmake-build-debug
--- Configuring done (0.3s)
--- Generating done (0.1s)
--- Build files have been written to: C:/Users/kikki/Sem15_VL25/HauptSeminar/optimizedHuffmanCoding/cmake-build-debug
+/snap/clion/338/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" -S /home/chiara/Documents/hauptSeminar/huffmanOptimization -B /home/chiara/Documents/hauptSeminar/huffmanOptimization/cmake-build-debug
+-- Configuring done (0.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/chiara/Documents/hauptSeminar/huffmanOptimization/cmake-build-debug

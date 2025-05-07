@@ -1,28 +1,25 @@
 #include <stdint.h>
 #include <malloc.h>
-#include <stdio.h>
+#include "../include/node.h"
 
 // ToDo:
 // 1. do not forget to free heap.
 // 2. verify if enough space for
 
-typedef struct Node {
-    uint8_t symbol;
-    uint16_t freq;
-    uint8_t num_children; // Number of children (2, 4, 8, 16)
-    struct Node** children; // Array of pointers to the children
-} Node;
-
-Node* create_node(uint8_t ch, uint32_t freq, uint8_t num_ch){
-    Node* newNode = malloc(sizeof(Node));
+Node* create_node(uint8_t ch, uint16_t freq, uint8_t num_ch){
+    Node* newNode = calloc(1,sizeof(Node));
     newNode -> symbol = ch;
     newNode -> freq = freq;
     newNode -> num_children = num_ch;
-    newNode -> children = malloc(sizeof(Node) * num_ch);
+    newNode -> children = (Node**) calloc(num_ch, sizeof(Node*));
     return newNode;
 }
 
-int main(){
-    printf("Hallo");
-    return 0;
+void print_node(Node* node) {
+    printf("Node: symbol %c (%d) with frequency: %u \n", node -> symbol, node -> symbol, node-> freq);
+}
+
+void free_node(Node* node) {
+    free(node->children);
+    free(node);
 }
