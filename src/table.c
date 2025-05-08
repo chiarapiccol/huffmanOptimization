@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "../include/symbol_table.h"
+#include "../include/table.h"
 
 void count_frequencies(const char* file_name, uint16_t* freq_table) {
     FILE* file = fopen(file_name, "r");
@@ -26,19 +26,30 @@ char* return_binary(uint8_t value) {
 }
 
 void print_freq_table(const uint16_t* freq_table, uint16_t size) {
-    printf("\n### TABLE ###\n");
+    printf("\n### FREQ TABLE ###\n");
     for (uint16_t i = 0; i < size; i++) {
         if (* (freq_table + i)) {
             if (i >= 32 && i <= 126) // sichtbare ASCII-Zeichen
                 printf("symbol: %c (%d - %s): frequency: %d\n", i, i, return_binary(i), freq_table[i]);
             else
                 printf("symbol: (non-printable %d - %s): frequency: %d\n", i, return_binary(i), freq_table[i]);
-
         }
     }
 }
 
-void save_freq_table(const char* file_name, uint16_t* freq_table, uint16_t size) {
+void print_encod_table(char** encode_table, uint16_t size) {
+    printf("\n### ENCODE TABLE ###\n");
+    for (uint16_t i = 0; i < size; i++) {
+        if (encode_table[i]) {
+            if (i >= 32 && i <= 126) // sichtbare ASCII-Zeichen
+                printf("symbol: %c (%d - %s): encode: %s\n", i, i, return_binary(i), encode_table[i]);
+            else
+                printf("symbol: (non-printable %d - %s): encode: %s\n", i, return_binary(i), encode_table[i]);
+        }
+    }
+}
+
+void save_table(const char* file_name, uint16_t* freq_table, uint16_t size) {
     FILE* file = fopen(file_name, "w");
     if (!file) {
         perror("Error opening file for writing");
@@ -52,7 +63,7 @@ void save_freq_table(const char* file_name, uint16_t* freq_table, uint16_t size)
     fclose(file);
 }
 
-void load_freq_table(const char* file_name, uint16_t* freq_table, uint16_t size) {
+void load_table(const char* file_name, uint16_t* freq_table, uint16_t size) {
     FILE* file = fopen(file_name, "r");
     if (!file) {
         perror("Error opening file for reading");

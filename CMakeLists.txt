@@ -13,8 +13,8 @@ add_executable(optimizedHuffmanCoding
         src/node.c
         src/main.c
         tests/tests.c
-        src/symbol_table.c
-        include/symbol_table.h
+        src/table.c
+        include/table.h
         src/huff_table.c
         src/huff_tree.c)
 

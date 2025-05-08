@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/symbol_table.h"
+#include "../include/table.h"
 #include "../include/node.h"
 #include "../include/heap.h"
 #include "../include/huffman.h"
@@ -18,17 +18,17 @@
 
 int main(){
     // ### 1. Create freq_table
-    char file_name[] = "tests/input.txt";
-    char freq_file[] = "tests/freq_table.txt";
+    char inputfile_name[] = "tests/input.txt";
+    char freqfile_name[] = "tests/freq_table.txt";
     uint16_t freq_table[MAX_NU_SYMB] = {0};
     if (CALC_INSTEAD_OF_LOAD_TAB) {
         // ...either generate and save the frequency table
-        count_frequencies(file_name, freq_table);
+        count_frequencies(inputfile_name, freq_table);
         print_freq_table(freq_table, MAX_NU_SYMB);
-        save_freq_table(freq_file, freq_table, MAX_NU_SYMB);
+        save_table(freqfile_name, freq_table, MAX_NU_SYMB);
     } else {
         // ...or load the frequency table from file
-        load_freq_table(freq_file, freq_table, MAX_NU_SYMB);
+        load_table(freqfile_name, freq_table, MAX_NU_SYMB);
         print_freq_table(freq_table, MAX_NU_SYMB);
     }
 
@@ -55,9 +55,10 @@ int main(){
     }
 
     // ### 3. Create the Tree
+    Node* root;
     if (CREATE_STD_INSTEAD_OF_OPT_TREE) {
         // # 3.1 Create the standard Huffman tree
-        Node* root = build_huffman_tree(minheap, NUM_CHILDREN);
+        root = build_huffman_tree(minheap, NUM_CHILDREN);
         // Print the tree
         if (PRINT_INSTEAD_OF_SAVE_STR) {
             //...either print the tree
@@ -71,7 +72,7 @@ int main(){
         }
     } else {
         // # 3.2 Create the optimized Huffman tree
-        Node* root = build_opt_huffman_tree(minheap, NUM_CHILDREN, minheap ->size);
+        root = build_opt_huffman_tree(minheap, NUM_CHILDREN, minheap ->size);
         // Print the tree
         if (PRINT_INSTEAD_OF_SAVE_STR) {
             //...either print the tree
@@ -89,8 +90,14 @@ int main(){
     free_minheap(minheap);
 
     // ### 4. Encode
-    uint16_t coding_table[MAX_NU_SYMB] = {0};
-    //decode_symbols();
+    // Create and fill the ecoding table
+    char* encoding_table[MAX_NU_SYMB] = {0};
+    char code_buffer[MAX_NU_SYMB] = {0};
+    encode(root, code_buffer, 0, encoding_table);
+    print_encod_table(encoding_table, MAX_NU_SYMB);
+
+    free_tree(root);
+
 
     // ### 5. Decode
     exit(EXIT_SUCCESS);

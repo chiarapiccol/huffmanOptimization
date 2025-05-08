@@ -2,11 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <math.h>
 
 #include "../include/huffman.h"
-
-#define UNUSED_SYMB 129  // it is not used character
 
 Node* build_huffman_tree(MinHeap* heap, uint8_t num_childs) {
     if (num_childs > 16 || num_childs % 2 != 0) {
@@ -79,6 +76,22 @@ void print_huffman_tree_nary(Node* node, const char* prefix, int is_last, FILE* 
         int is_last_child = (i == node->num_children - 1);
         print_huffman_tree_nary(node->children[i], new_prefix, is_last_child, out);
     }
+}
+
+
+void free_tree(Node* node) {
+    if (!node) return;
+
+    // Recursively free children
+    for (uint8_t i = 0; i < node->num_children; i++) {
+        if (node->children[i]) {
+            free_tree(node->children[i]);
+        }
+    }
+    // Free the children array itself
+    free(node->children);
+    // Free the node
+    free(node);
 }
 
 
