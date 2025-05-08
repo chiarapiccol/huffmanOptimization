@@ -1,4 +1,0 @@
-/snap/clion/338/bin/cmake/linux/x64/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" -S /home/chiara/Documents/hauptSeminar/huffmanOptimization -B /home/chiara/Documents/hauptSeminar/huffmanOptimization/cmake-build-debug
--- Configuring done (0.0s)
--- Generating done (0.0s)
--- Build files have been written to: /home/chiara/Documents/hauptSeminar/huffmanOptimization/cmake-build-debug
