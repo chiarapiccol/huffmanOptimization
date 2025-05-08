@@ -16,22 +16,24 @@ void count_frequencies(const char* file_name, uint16_t* freq_table) {
     fclose(file);
 }
 
-char* return_binary(unsigned int number) {
-    char* binary = calloc(8, sizeof(char)); // Allocate memory for 32 bits + null terminator
-    if (!binary) {
-        perror("Memory allocation failed");
-        exit(EXIT_FAILURE);
+char* return_binary(uint8_t value) {
+    static char bin[9];
+    for (int i = 7; i >= 0; i--) {
+        bin[7 - i] = (value & (1 << i)) ? '1' : '0';
     }
-    for (uint8_t i = 7; i >= 0; i--) {
-        binary[7 - i] = (number & (1U << i)) ? '1' : '0';
-    }
-    return binary;
+    bin[8] = '\0';
+    return bin;
 }
 
 void print_freq_table(const uint16_t* freq_table, uint16_t size) {
-    for (uint16_t i = 0; i <= size; i++) {
+    printf("\n### TABLE ###\n");
+    for (uint16_t i = 0; i < size; i++) {
         if (* (freq_table + i)) {
-            printf("symbol: %c (%d - %s): frequency: %d\n", i, i, return_binary(i), * (freq_table + i));
+            if (i >= 32 && i <= 126) // sichtbare ASCII-Zeichen
+                printf("symbol: %c (%d - %s): frequency: %d\n", i, i, return_binary(i), freq_table[i]);
+            else
+                printf("symbol: (non-printable %d - %s): frequency: %d\n", i, return_binary(i), freq_table[i]);
+
         }
     }
 }

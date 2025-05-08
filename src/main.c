@@ -11,16 +11,17 @@
 //
 
 #define MAX_NU_SYMB 256 // From ASCII-Tabelle
-#define NUM_CHILDREN 2 // Number of children in the k-ary Huffman tree (2, 4, 8, 16)
-#define LOAD_INSTEAD_OF_CALC_TAB 0 // Whatever the symbol table shall be calculated or loaded
-#define PRINT_INSTEAD_OF_SAVE_TREE 1
+#define NUM_CHILDREN 4 // Number of children in the k-ary Huffman tree (2, 4, 8, 16)
+#define CALC_INSTEAD_OF_LOAD_TAB 1 // Whatever the symbol table shall be calculated or loaded
+#define PRINT_INSTEAD_OF_SAVE_STR 1
+#define CREATE_STD_INSTEAD_OF_OPT_TREE 0
 
 int main(){
     // ### 1. Create freq_table
     char file_name[] = "tests/input.txt";
     char freq_file[] = "tests/freq_table.txt";
     uint16_t freq_table[MAX_NU_SYMB] = {0};
-    if (LOAD_INSTEAD_OF_CALC_TAB) {
+    if (CALC_INSTEAD_OF_LOAD_TAB) {
         // ...either generate and save the frequency table
         count_frequencies(file_name, freq_table);
         print_freq_table(freq_table, MAX_NU_SYMB);
@@ -29,11 +30,9 @@ int main(){
         // ...or load the frequency table from file
         load_freq_table(freq_file, freq_table, MAX_NU_SYMB);
         print_freq_table(freq_table, MAX_NU_SYMB);
-
     }
 
-    // ### 2. Create the k-ary Huffman tree
-    // ## 2.1 Create the heap
+    // ### 2. Create the min Heap
     MinHeap* minheap = create_heap(MAX_NU_SYMB);
     // For each relevant (freq!=0) symbol of the symbol table
     for (uint16_t i = 0; i < MAX_NU_SYMB; i++) {
@@ -43,24 +42,51 @@ int main(){
             insert_node_in_minheap(minheap, node);
         }
     }
-    print_heap(minheap);
-
-    // ## 2.2 Create the tree
-    Node* root = build_huffman_tree(minheap, NUM_CHILDREN);
-    if (PRINT_INSTEAD_OF_SAVE_TREE) {
-        //...either print the tree
-        print_huffman_tree_nary(root, "", 1, stdout);
+    // Print the Min Heap
+    if (PRINT_INSTEAD_OF_SAVE_STR) {
+        //...either print the heap
+        printf("\n### MIN HEAP ###\n");
+        print_minheap_tree(minheap, 0, 0, "", 0, stdout);
     } else {
         //...or visualize and save it in the following file
-        FILE* file_name = fopen("tests/huffman_tree.txt", "w");
-        print_huffman_tree_nary(root, "", 1, file_name);
-        fclose(file_name);
+        FILE* filename_heap = fopen("tests/min_heap.txt", "w");
+        print_minheap_tree(minheap, 0, 0, "", 0, filename_heap);
+        fclose(filename_heap);
     }
+
+    // ### 3. Create the Tree
+    if (CREATE_STD_INSTEAD_OF_OPT_TREE) {
+        // # 3.1 Create the standard Huffman tree
+        Node* root = build_huffman_tree(minheap, NUM_CHILDREN);
+        // Print the tree
+        if (PRINT_INSTEAD_OF_SAVE_STR) {
+            //...either print the tree
+            printf("\n### STANDARD HUFFMAN TREE ###\n");
+            print_huffman_tree_nary(root, "", 1, stdout);
+        } else {
+            //...or visualize and save it in the following file
+            FILE* file_name_tree = fopen("tests/huffman_tree.txt", "w");
+            print_huffman_tree_nary(root, "#", 1, file_name_tree);
+            fclose(file_name_tree);
+        }
+    } else {
+        // # 3.2 Create the optimized Huffman tree
+        Node* root = build_opt_huffman_tree(minheap, NUM_CHILDREN, minheap ->size);
+        // Print the tree
+        if (PRINT_INSTEAD_OF_SAVE_STR) {
+            //...either print the tree
+            printf("\n### OPTIMIZED HUFFMAN TREE ###\n");
+            print_huffman_tree_nary(root, "", 1, stdout);
+        } else {
+            //...or visualize and save it in the following file
+            FILE* file_name_tree = fopen("tests/huffman_tree.txt", "w");
+            print_huffman_tree_nary(root, "#", 1, file_name_tree);
+            fclose(file_name_tree);
+        }
+    }
+
     // Free the allocated space for min heap
     free_minheap(minheap);
-
-    // ### 3. Optimize tree
-    //optimize_tree();
 
     // ### 4. Encode
     uint16_t coding_table[MAX_NU_SYMB] = {0};

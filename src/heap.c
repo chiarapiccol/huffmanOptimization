@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <malloc.h>
 #include <math.h>
+#include <ctype.h>
 
 // Quelle: https://www.digitalocean.com/community/tutorials/min-heap-binary-tree
 
@@ -50,6 +51,16 @@ void insert_node_in_minheap(MinHeap* heap, Node* node) {
     }
 }
 
+void insert_node_in_the_last_pos(MinHeap* heap, Node* node) {
+    if (heap->size == heap->capacity) {
+        fprintf(stderr, "Cannot insert the node. Heap is already full!");
+        return;
+    }
+    uint16_t curr_position = heap->size;
+    heap -> size++;
+    heap -> data[curr_position] = node;
+}
+
 MinHeap* heapify(MinHeap* heap, uint16_t index) {
     if (heap -> size <= 1) {
         return heap;
@@ -81,17 +92,44 @@ void remove_current_root_and_heapify(MinHeap* heap) {
     heapify(heap, 0);
 }
 
-void print_heap(MinHeap* heap) {
-    uint16_t next_level_end = 1;
-    for (uint16_t i = 0; i < heap->size; i++) {
-        printf("%c: %u ", heap->data[i]->symbol, heap->data[i]->freq);
-        if (i + 1 == next_level_end) {
-            printf("\n");
-            next_level_end = next_level_end * 2 + 1;
-        }
+// Helper function to print a single node's symbol and frequency
+void print_heap_node(Node* node, FILE* out) {
+    if (!node) {
+        fprintf(out, "[NULL]");
+        return;
+    }
+
+    if (node->symbol != 255 && isprint(node->symbol)) {
+        fprintf(out, "'%c' (%u)", node->symbol, node->freq);
+    } else if (node->symbol != 255) {
+        fprintf(out, "0x%02X (%u)", node->symbol, node->freq);
+    } else {
+        fprintf(out, "* (%u)", node->freq);  // Internal node
     }
 }
 
+// Recursive function to print the heap as a binary tree
+void print_minheap_tree(MinHeap* heap, int index, int depth, const char* prefix, int is_left, FILE* out) {
+    if (index >= heap->size || !heap->data[index]) return;
+
+    // Print the branch
+    for (int i = 0; i < depth; i++) {
+        fprintf(out, "│   ");
+    }
+    fprintf(out, "%s── ", is_left ? "├" : "└");
+    print_heap_node(heap->data[index], out);
+    fprintf(out, "\n");
+
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size || right < heap->size) {
+        if (left < heap->size)
+            print_minheap_tree(heap, left, depth + 1, prefix, 1, out);
+        if (right < heap->size)
+            print_minheap_tree(heap, right, depth + 1, prefix, 0, out);
+    }
+}
 
 void free_minheap(MinHeap* heap) {
     if (!heap)
